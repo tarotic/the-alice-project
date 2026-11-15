@@ -293,5 +293,11 @@ test('AC21a AC21b contrast computed independently; no transition/animation', () 
   assert.notEqual(hex('ring-finished').toLowerCase(), hex('ring-running').toLowerCase());
   assert.ok(cr(hex('ring-finished'), hex('page-bg')) >= 3);
   assert.ok(cr(hex('done-text'), hex('page-bg')) >= 4.5);
-  assert.ok(!/transition|animation/.test(css));
+  // Increment 1 banned all animation. The rocket launch and blast ring are now allowed,
+  // so the check is: only those named animations exist, and reduced motion turns them off.
+  assert.ok(!/transition/.test(css));
+  const animated = [...css.matchAll(/animation:\s*([a-z-]+)/g)].map((m) => m[1]);
+  assert.ok(animated.length > 0);
+  for (const name of animated) assert.ok(['rocket-shake', 'flame-flicker', 'rocket-launch', 'ring-blast', 'none'].includes(name), name);
+  assert.match(css, /prefers-reduced-motion:\s*reduce/);
 });

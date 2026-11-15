@@ -46,6 +46,11 @@ export function resume(timer, now) {
   return { ...timer, status: 'running', lastNowMs: now };
 }
 
+// True only on the tick/pause that moves the timer into 'finished', so the chime plays once.
+export function justFinished(prev, next) {
+  return prev.status !== 'finished' && next.status === 'finished';
+}
+
 export function reset(timer) {
   return { status: 'idle', durationMs: timer.durationMs, remainingMs: timer.durationMs, lastNowMs: null };
 }
