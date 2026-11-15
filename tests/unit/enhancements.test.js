@@ -33,10 +33,17 @@ test('colour picker offers exactly ten distinct colours, default among them', ()
   assert.ok(hexes.includes(DEFAULT_RING_COLOUR.toUpperCase()));
 });
 
-test('every picker colour is at least 3:1 against the white page', () => {
+test('every picker colour is at least 3:1 against the dark page background', () => {
+  const bg = css.match(/--page-bg:\s*(#[0-9a-fA-F]{6})/)[1];
   for (const c of RING_COLOURS) {
-    assert.ok(contrast(c.hex, '#FFFFFF') >= 3, `${c.name} ${c.hex}`);
+    assert.ok(contrast(c.hex, bg) >= 3, `${c.name} ${c.hex} on ${bg}`);
   }
+});
+
+test('space background uses no images or external resources', () => {
+  assert.ok(!/url\(|@import/.test(css));
+  assert.match(css, /body::before/);
+  assert.ok(html.includes('class="planet planet-big"'));
 });
 
 test('rocket is hidden until the final 10 seconds', () => {
