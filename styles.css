@@ -50,6 +50,121 @@ button, input {
 .ring {
   width: min(70vmin, 60vh);
   height: min(70vmin, 60vh);
+  overflow: visible;
+}
+
+.ring-blast {
+  fill: none;
+  stroke: var(--ring-finished);
+  stroke-width: 6;
+  opacity: 0;
+  transform-box: view-box;
+  transform-origin: 60px 60px;
+}
+
+.ring.is-finished .ring-blast {
+  animation: ring-blast 1s ease-out 0.5s 1 forwards;
+}
+
+@keyframes ring-blast {
+  0% { opacity: 0; transform: scale(1); }
+  15% { opacity: 0.9; }
+  100% { opacity: 0; transform: scale(1.35); }
+}
+
+.rocket {
+  position: absolute;
+  left: 50%;
+  bottom: 4%;
+  width: 12%;
+  height: auto;
+  transform: translateX(-50%);
+  transform-origin: 50% 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.rocket-body {
+  fill: #FFFFFF;
+  stroke: #444444;
+  stroke-width: 2;
+}
+
+.rocket-accent {
+  fill: var(--ring-running);
+}
+
+.rocket-flame {
+  fill: #F0A202;
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+}
+
+.rocket.is-prep {
+  animation: rocket-shake 0.12s ease-in-out infinite alternate;
+}
+
+.rocket.is-prep .rocket-flame,
+.rocket.is-launch .rocket-flame {
+  animation: flame-flicker 0.1s ease-in-out infinite alternate;
+}
+
+.rocket.is-launch {
+  animation: rocket-launch 1.4s cubic-bezier(0.5, 0, 1, 0.5) forwards;
+}
+
+@keyframes rocket-shake {
+  from { transform: translateX(-50%) rotate(-2deg); }
+  to { transform: translateX(-50%) rotate(2deg); }
+}
+
+@keyframes flame-flicker {
+  from { transform: scaleY(0.7); }
+  to { transform: scaleY(1.25); }
+}
+
+@keyframes rocket-launch {
+  0% { transform: translateX(-50%) translateY(0); opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translateX(-50%) translateY(-110vh); opacity: 0; }
+}
+
+#colours {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  max-width: 360px;
+}
+
+.swatch {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: 50%;
+  border: 3px solid #FFFFFF;
+  box-shadow: 0 0 0 1px #999999;
+}
+
+.swatch[aria-pressed="true"] {
+  outline: 3px solid var(--done-text);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rocket.is-prep,
+  .rocket.is-prep .rocket-flame,
+  .rocket.is-launch .rocket-flame,
+  .ring.is-finished .ring-blast {
+    animation: none;
+  }
+  .rocket.is-launch {
+    animation: none;
+    opacity: 0;
+  }
+  .ring-blast {
+    display: none;
+  }
 }
 
 .ring-track {

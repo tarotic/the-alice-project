@@ -12,11 +12,19 @@
     <svg class="ring" id="ring" viewBox="0 0 120 120" aria-hidden="true">
       <circle class="ring-track" id="ring-track" cx="60" cy="60" r="54"></circle>
       <circle class="ring-arc" id="ring-arc" cx="60" cy="60" r="54" transform="rotate(-90 60 60)" stroke-dasharray="339.292 339.292"></circle>
+      <circle class="ring-blast" id="ring-blast" cx="60" cy="60" r="54"></circle>
     </svg>
     <div class="readout">
       <p id="time-text" class="time">02:00</p>
       <p id="done-text" class="done" hidden>Done</p>
     </div>
+    <svg class="rocket" id="rocket" viewBox="0 0 40 100" hidden aria-hidden="true">
+      <path class="rocket-flame" d="M14 68 Q20 100 26 68 Z"></path>
+      <path class="rocket-accent" d="M12 48 L2 66 L12 66 Z"></path>
+      <path class="rocket-accent" d="M28 48 L38 66 L28 66 Z"></path>
+      <path class="rocket-body" d="M20 6 C29 18 31 40 29 70 L11 70 C9 40 11 18 20 6 Z"></path>
+      <circle class="rocket-accent" cx="20" cy="34" r="5"></circle>
+    </svg>
   </section>
   <section class="controls">
     <div id="presets">
@@ -30,6 +38,7 @@
       <input id="custom-seconds" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" value="0" aria-label="Seconds">
       <button type="button" id="custom-apply">Set</button>
     </div>
+    <div id="colours" role="group" aria-label="Ring colour"></div>
     <div class="actions">
       <button type="button" id="start-btn">Start</button>
       <button type="button" id="pause-btn" hidden>Pause</button>
