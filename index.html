@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Timer</title>
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<main class="app">
+  <section class="display">
+    <svg class="ring" id="ring" viewBox="0 0 120 120" aria-hidden="true">
+      <circle class="ring-track" id="ring-track" cx="60" cy="60" r="54"></circle>
+      <circle class="ring-arc" id="ring-arc" cx="60" cy="60" r="54" transform="rotate(-90 60 60)" stroke-dasharray="339.292 339.292"></circle>
+    </svg>
+    <div class="readout">
+      <p id="time-text" class="time">02:00</p>
+      <p id="done-text" class="done" hidden>Done</p>
+    </div>
+  </section>
+  <section class="controls">
+    <div id="presets">
+      <button type="button" class="preset" data-preset-seconds="120">2 min</button>
+      <button type="button" class="preset" data-preset-seconds="180">3 min</button>
+      <button type="button" class="preset" data-preset-seconds="300">5 min</button>
+      <button type="button" class="preset" data-preset-seconds="600">10 min</button>
+    </div>
+    <div id="custom">
+      <input id="custom-minutes" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" value="0" aria-label="Minutes">
+      <input id="custom-seconds" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" value="0" aria-label="Seconds">
+      <button type="button" id="custom-apply">Set</button>
+    </div>
+    <div class="actions">
+      <button type="button" id="start-btn">Start</button>
+      <button type="button" id="pause-btn" hidden>Pause</button>
+      <button type="button" id="resume-btn" hidden>Resume</button>
+      <button type="button" id="reset-btn" hidden>Reset</button>
+    </div>
+  </section>
+</main>
+<script type="module" src="./src/ui.js"></script>
+</body>
+</html>
