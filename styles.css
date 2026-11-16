@@ -49,8 +49,14 @@ body::before {
   pointer-events: none;
 }
 
-.planet {
+.planet-system {
   position: absolute;
+  opacity: 0.6;
+}
+
+.planet-body {
+  position: absolute;
+  inset: 0;
   border-radius: 50%;
 }
 
@@ -59,8 +65,10 @@ body::before {
   height: 40vmin;
   top: -10vmin;
   right: -12vmin;
+}
+
+.planet-big .planet-body {
   background: radial-gradient(circle at 30% 30%, #F4B183, #B0653A 55%, #5A2E17 100%);
-  opacity: 0.5;
 }
 
 .planet-small {
@@ -68,8 +76,50 @@ body::before {
   height: 10vmin;
   bottom: 12%;
   left: 6vmin;
+}
+
+.planet-small .planet-body {
   background: radial-gradient(circle at 35% 35%, #9EC9FF, #2E5C9A 60%, #13284D);
-  opacity: 0.6;
+}
+
+/* A tilted ring drawn as a thin ellipse, wider than the planet. */
+.planet-ring {
+  position: absolute;
+  left: -25%;
+  top: 42%;
+  width: 150%;
+  height: 16%;
+  box-sizing: border-box;
+  border: 0.8vmin solid rgba(240, 215, 170, 0.6);
+  border-radius: 50%;
+  transform: rotate(-18deg);
+}
+
+.planet-small .planet-ring {
+  border-width: 0.4vmin;
+  border-color: rgba(190, 220, 255, 0.6);
+}
+
+/* The orbit spins around the planet's centre; the moon rides on its top edge. */
+.orbit {
+  position: absolute;
+  inset: 0;
+  animation: orbit 14s linear infinite;
+}
+
+.moon {
+  position: absolute;
+  left: 50%;
+  top: -20%;
+  width: 20%;
+  height: 20%;
+  margin-left: -10%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #FFFFFF, #B8BEC9 60%, #6A7080);
+}
+
+@keyframes orbit {
+  to { transform: rotate(360deg); }
 }
 
 [hidden] {
@@ -182,10 +232,11 @@ button, input {
   to { transform: scaleY(1.25); }
 }
 
+/* Launch: the rocket flies up and to the right, shrinking, toward the big planet. */
 @keyframes rocket-launch {
-  0% { transform: translateX(-50%) translateY(0); opacity: 1; }
-  80% { opacity: 1; }
-  100% { transform: translateX(-50%) translateY(-110vh); opacity: 0; }
+  0% { transform: translateX(-50%) translate(0, 0) scale(1); opacity: 1; }
+  70% { opacity: 1; }
+  100% { transform: translateX(-50%) translate(42vw, -58vh) scale(0.3); opacity: 0; }
 }
 
 #colours {
@@ -223,6 +274,9 @@ button, input {
   }
   .ring-blast {
     display: none;
+  }
+  .orbit {
+    animation: none;
   }
 }
 
@@ -280,9 +334,21 @@ button, input {
   gap: 8px;
 }
 
+#custom .field {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
 #custom input {
-  width: 64px;
+  width: 72px;
   text-align: center;
+}
+
+#custom .unit {
+  font-size: 1.1rem;
+  color: var(--control-text);
+  opacity: 0.8;
 }
 
 @media (orientation: landscape) {

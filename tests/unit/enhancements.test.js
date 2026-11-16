@@ -43,7 +43,7 @@ test('every picker colour is at least 3:1 against the dark page background', () 
 test('space background uses no images or external resources', () => {
   assert.ok(!/url\(|@import/.test(css));
   assert.match(css, /body::before/);
-  assert.ok(html.includes('class="planet planet-big"'));
+  assert.ok(html.includes('class="planet-system planet-big"'));
 });
 
 test('rocket is hidden until the final 10 seconds', () => {

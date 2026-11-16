@@ -15,7 +15,6 @@ const presetsEl = $('presets');
 const customEl = $('custom');
 const minEl = $('custom-minutes');
 const secEl = $('custom-seconds');
-const applyEl = $('custom-apply');
 const startEl = $('start-btn');
 const pauseEl = $('pause-btn');
 const resumeEl = $('resume-btn');
@@ -65,7 +64,6 @@ function render() {
   for (const b of presetButtons) b.disabled = s.durationLocked;
   minEl.disabled = s.durationLocked;
   secEl.disabled = s.durationLocked;
-  applyEl.disabled = s.durationLocked;
   startEl.hidden = !s.controls.start;
   pauseEl.hidden = !s.controls.pause;
   resumeEl.hidden = !s.controls.resume;
@@ -99,10 +97,15 @@ function apply(next) {
 for (const b of presetButtons) {
   b.addEventListener('click', () => apply(setDuration(timer, Number(b.dataset.presetSeconds))));
 }
-applyEl.addEventListener('click', () => {
+// Custom time applies as you type; invalid or partial values are ignored until they make sense.
+function applyCustom() {
   const s = parseCustomDuration(minEl.value, secEl.value);
   if (s !== null) apply(setDuration(timer, s));
-});
+}
+for (const input of [minEl, secEl]) {
+  input.addEventListener('input', applyCustom);
+  input.addEventListener('focus', () => input.select());
+}
 // Start and Resume are taps, so they are the places to unlock sound on phones.
 startEl.addEventListener('click', () => { unlockSound(); apply(start(timer, Date.now())); });
 pauseEl.addEventListener('click', () => apply(pause(timer, Date.now())));
