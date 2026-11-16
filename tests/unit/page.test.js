@@ -5,7 +5,7 @@ import { PRESET_SECONDS } from '../../src/timer.js';
 
 const html = readText('index.html');
 const css = readText('styles.css');
-const ui = readText('src/ui.js');
+const ui = readText('src/tools/timer/tool.js');
 
 function cssRules() {
   const clean = css.replace(/\/\*[\s\S]*?\*\//g, '').replace(/@media[^{]*\{/g, '');
