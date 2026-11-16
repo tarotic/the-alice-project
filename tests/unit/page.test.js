@@ -61,7 +61,7 @@ test('AC17 one 48px minimum rule covers buttons and inputs', () => {
 });
 
 test('AC18 page has every control id', () => {
-  for (const id of ['presets', 'custom', 'custom-minutes', 'custom-seconds',
+  for (const id of ['presets', 'custom', 'wheel-min', 'wheel-sec',
     'start-btn', 'pause-btn', 'resume-btn', 'reset-btn']) {
     assert.ok(html.includes(`id="${id}"`), `missing id ${id}`);
   }
