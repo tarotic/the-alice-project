@@ -15,16 +15,21 @@
   --hold-fill: #2E7D32;
 }
 
+/* The page is a single screen: no scrolling of the document, and no bounce past the edges. */
 html, body {
   margin: 0;
   height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 body {
   background: var(--page-bg);
   color: var(--time-text);
   font-family: system-ui, sans-serif;
-  overflow-x: hidden;
+  /* Tab bar on top, tool below it. Only the drawing tools' area scrolls, so the page itself never does. */
+  display: flex;
+  flex-direction: column;
 }
 
 /* Stars: a small repeating field of dots, behind everything. No images are loaded. */
@@ -150,7 +155,7 @@ button, input {
 }
 
 .app {
-  min-height: calc(100dvh - var(--switcher-height));
+  min-height: 100%;
   box-sizing: border-box;
   padding: 12px;
   display: flex;
@@ -462,6 +467,13 @@ button, input {
 }
 
 /* Letters and Shapes area. Scoped so it never touches the timer's own rules. */
+#tool-area {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
 #tool-area:not([data-tool="timer"]) {
   box-sizing: border-box;
   padding: 12px;
@@ -470,8 +482,11 @@ button, input {
   align-items: center;
   gap: 12px;
   position: relative;
-  min-height: calc(100dvh - var(--switcher-height));
+  /* Fills the space under the tab bar. When the picker and controls are taller than a short screen,
+     this area scrolls on its own so the Parent button can always be reached. */
 }
+
+#switcher { flex: none; }
 
 #tool-area:not([data-tool="timer"]) * {
   box-sizing: border-box;
@@ -497,7 +512,7 @@ button, input {
 .mode-row select[hidden] { display: none; }
 /* Ink colour picker on the drawing tools: five 48px swatches per row so it fits a phone. */
 .ink-colours { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 280px; }
-.pad { width: min(92vw, 420px); aspect-ratio: 1 / 1; border: 3px solid var(--control-border); border-radius: 12px; background: var(--control-bg); touch-action: none; display: block; }
+.pad { width: min(92vw, 420px, 50dvh); aspect-ratio: 1 / 1; border: 3px solid var(--control-border); border-radius: 12px; background: var(--control-bg); touch-action: none; display: block; }
 .reward { min-height: 56px; display: flex; align-items: center; gap: 8px; font-size: 1.6rem; font-weight: bold; color: var(--reward-text); }
 .reward canvas { width: 48px; height: 48px; }
 .parent { position: relative; align-self: flex-end; overflow: hidden; min-width: 120px; min-height: 48px; font-size: 0.9rem; background: var(--control-bg); border: 2px dashed var(--control-border); color: var(--control-text); user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; touch-action: none; }
