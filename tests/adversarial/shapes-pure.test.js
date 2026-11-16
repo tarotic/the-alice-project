@@ -147,7 +147,7 @@ test('g carry-over: a-trace does not pass g; g own trace passes; descender withi
   assert.equal(done(g, flat(a)), false, 'a over g'); assert.ok(cov(g, flat(a)) < 0.85)
   assert.ok(done(g, flat(g)))
   for (const p of flat(g)) assert.ok(p.x >= 0 && p.x <= 100 && p.y >= 0 && p.y <= 100, `g point ${p.x},${p.y}`)
-  assert.ok(Math.max(...flat(g).map((p) => p.y)) > 85, 'g has a descender below the baseline')
+  assert.ok(Math.max(...flat(g).map((p) => p.y)) > 70, 'g has a descender below the baseline (baseline now at y=68)')
   t.diagnostic(`a over g coverage ${cov(g, flat(a)).toFixed(3)} stray ${str(g, flat(a)).toFixed(3)}`)
   const passes = GLYPHS.filter((o) => o.id !== 'g' && done(o, flat(g))).map((o) => o.id), passedBy = GLYPHS.filter((o) => o.id !== 'g' && done(g, flat(o))).map((o) => o.id)
   t.diagnostic(`tracing g also passes: ${passes.join(',') || '(none)'}; tracing these passes g: ${passedBy.join(',') || '(none)'}`)

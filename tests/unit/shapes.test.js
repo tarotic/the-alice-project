@@ -40,8 +40,9 @@ test('shapes are deep-frozen and helpers behave', () => {
   assert.deepEqual(c[3], [0, 0])
   assert.notEqual(c[3], v[0])
   assert.equal(v.length, 3)
-  const sv = starVertices(50, 52, 40, 16)
-  assert.equal(sv.length, 10)
+  const sv = starVertices(50, 52, 40)
+  assert.equal(sv.length, 5)
+  // five points in pentagram order: 0,2,4,1,3 of the outer ring
   assert.ok(Math.abs(sv[0][0] - 50) < 1e-9 && Math.abs(sv[0][1] - 12) < 1e-9)
 })
 

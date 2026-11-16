@@ -114,13 +114,24 @@ function deepFreeze(o) {
 
 const toPoints = (stroke) => stroke.map(([x, y]) => ({ x, y }))
 
+// Lowercase sources are authored tall: ascenders at y=15, baseline at y=85. That sits the bowls
+// low in the box. Squash them so the baseline is at y=68 and the x-height body centres on the
+// middle line, with descenders hanging below it.
+const LOWER_BAND = { top: 15, base: 85, newTop: 8, newBase: 68 }
+const lowerY = (y) => LOWER_BAND.newTop + ((y - LOWER_BAND.top) * (LOWER_BAND.newBase - LOWER_BAND.newTop)) / (LOWER_BAND.base - LOWER_BAND.top)
+
+const placed = (id, stroke) => {
+  const pts = toPoints(stroke)
+  return id === id.toLowerCase() ? pts.map((p) => ({ x: p.x, y: lowerY(p.y) })) : pts
+}
+
 export const GLYPHS = deepFreeze(
   [...PAIRED_ORDER]
     .filter((id) => id in GLYPH_SOURCE)
     .map((id) => ({
       id,
       case: id === id.toLowerCase() ? 'lowercase' : 'uppercase',
-      strokes: GLYPH_SOURCE[id].map((s) => resample(toPoints(s), GLYPH_POINT_SPACING)),
+      strokes: GLYPH_SOURCE[id].map((s) => resample(placed(id, s), GLYPH_POINT_SPACING)),
     })),
 )
 

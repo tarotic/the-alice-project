@@ -2,14 +2,15 @@ import { GLYPHS } from './glyphs.js'
 import { emptyInk, startStroke, extendStroke, endStroke, inkPoints } from './ink.js'
 import { initialHold, parentHold } from './parent-hold.js'
 import { coverage, strayRatio, isDone, TRACE_TOLERANCE } from './scoring.js'
+import { SEQUENCE_MODE, startIndex, nextIndex } from './modes.js'
 
 export function nextLetter(index, list) {
   if (list.length === 0) throw new Error('letter list is empty')
   return (index + 1) % list.length
 }
 
-export function createLetterGame() {
-  return { index: 0, ink: emptyInk(), done: false, hold: initialHold() }
+export function createLetterGame(mode = SEQUENCE_MODE) {
+  return { index: 0, mode, ink: emptyInk(), done: false, hold: initialHold() }
 }
 
 export function currentGlyph(state, glyphs = GLYPHS) {
@@ -45,8 +46,14 @@ export function clearInk(state) {
   return { ...state, ink: emptyInk(), done: false, hold: initialHold() }
 }
 
-export function goNext(state, glyphs = GLYPHS) {
-  return { index: nextLetter(state.index, glyphs), ink: emptyInk(), done: false, hold: initialHold() }
+export function goNext(state, glyphs = GLYPHS, rng) {
+  const index = state.mode ? nextIndex(state.index, state.mode, glyphs, rng) : nextLetter(state.index, glyphs)
+  return { ...state, index, ink: emptyInk(), done: false, hold: initialHold() }
+}
+
+// Switch to another mode: start on its first glyph and clear the pad.
+export function setMode(state, mode, glyphs = GLYPHS) {
+  return { ...state, mode, index: startIndex(mode, glyphs), ink: emptyInk(), done: false, hold: initialHold() }
 }
 
 export function isLetterDone(state) {

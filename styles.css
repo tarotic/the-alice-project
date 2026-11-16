@@ -489,6 +489,9 @@ button, input {
 }
 
 .letter-label { font-size: 1.5rem; font-weight: bold; color: var(--time-text); }
+.mode-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.mode-row select { min-height: 48px; min-width: 48px; padding: 0 12px; font-size: 1rem; border: 2px solid var(--control-border); border-radius: 8px; background: var(--control-bg); color: var(--control-text); }
+.mode-row select[hidden] { display: none; }
 .pad { width: min(92vw, 420px); aspect-ratio: 1 / 1; border: 3px solid var(--control-border); border-radius: 12px; background: var(--control-bg); touch-action: none; display: block; }
 .reward { min-height: 56px; display: flex; align-items: center; gap: 8px; font-size: 1.6rem; font-weight: bold; color: var(--reward-text); }
 .reward canvas { width: 48px; height: 48px; }
