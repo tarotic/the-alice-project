@@ -100,6 +100,12 @@ body::before {
   border-color: rgba(190, 220, 255, 0.6);
 }
 
+/* The ring is drawn whole behind the planet; only its lower half is drawn again in front,
+   so the far side of the ring goes behind the planet. */
+.planet-ring-front {
+  clip-path: inset(50% 0 0 0);
+}
+
 /* The orbit spins around the planet's centre; the moon rides on its top edge. */
 .orbit {
   position: absolute;
@@ -110,7 +116,7 @@ body::before {
 .moon {
   position: absolute;
   left: 50%;
-  top: -20%;
+  top: -34%;
   width: 20%;
   height: 20%;
   margin-left: -10%;
