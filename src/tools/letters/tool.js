@@ -64,26 +64,56 @@ export function createTraceTool({ id, label, items, labelText, withModes = false
         modeRow.append(modeSel, letterSel)
         head.push(modeRow)
       }
-      const colourRow = mk('div', 'ink-colours')
-      colourRow.setAttribute('role', 'group')
-      colourRow.setAttribute('aria-label', 'Ink colour')
+      // Ink colour: one button beside Clear and Next. Tapping it opens a modal with the swatches.
+      const colourBtn = mk('button', 'ink-colour-btn')
+      colourBtn.type = 'button'
+      colourBtn.setAttribute('aria-haspopup', 'dialog')
+      colourBtn.setAttribute('aria-expanded', 'false')
+      const modal = mk('div', 'ink-modal')
+      modal.hidden = true
+      const panel = mk('div', 'ink-modal-panel')
+      panel.setAttribute('role', 'dialog')
+      panel.setAttribute('aria-modal', 'true')
+      panel.setAttribute('aria-label', 'Ink colour')
+      const grid = mk('div', 'ink-colours')
+      grid.setAttribute('role', 'group')
+      grid.setAttribute('aria-label', 'Ink colour')
       const swatches = RING_COLOURS.map((c) => {
         const b = mk('button', 'swatch')
         b.type = 'button'
         b.setAttribute('aria-label', c.name)
         b.style.background = c.hex
-        colourRow.append(b)
-        return { el: b, hex: c.hex }
+        grid.append(b)
+        return { el: b, hex: c.hex, name: c.name }
       })
+      const doneBtn = mk('button', '', 'Done')
+      doneBtn.type = 'button'
+      panel.append(mk('p', 'ink-modal-title', 'Ink colour'), grid, doneBtn)
+      modal.append(panel)
       const showInkColour = () => {
         for (const sw of swatches) sw.el.setAttribute('aria-pressed', String(sw.hex === inkColour))
+        const current = RING_COLOURS.find((c) => c.hex === inkColour)
+        colourBtn.style.background = inkColour
+        colourBtn.setAttribute('aria-label', 'Ink colour: ' + (current ? current.name : inkColour))
+      }
+      const openInkColour = () => {
+        showInkColour()
+        modal.hidden = false
+        colourBtn.setAttribute('aria-expanded', 'true')
+        const chosen = swatches.find((sw) => sw.hex === inkColour) || swatches[0]
+        if (typeof chosen.el.focus === 'function') chosen.el.focus()
+      }
+      const closeInkColour = () => {
+        modal.hidden = true
+        colourBtn.setAttribute('aria-expanded', 'false')
+        if (typeof colourBtn.focus === 'function') colourBtn.focus()
       }
       showInkColour()
       const clearBtn = mk('button', '', 'Clear')
       const nextBtn = mk('button', '', 'Next')
       clearBtn.type = nextBtn.type = 'button'
       const actions = mk('div', 'actions')
-      actions.append(clearBtn, nextBtn)
+      actions.append(colourBtn, clearBtn, nextBtn)
       const reward = mk('div', 'reward')
       const rewardText = mk('span')
       const star = mk('canvas', 'reward-star')
@@ -92,7 +122,7 @@ export function createTraceTool({ id, label, items, labelText, withModes = false
       parentBtn.type = 'button'
       const fill = mk('span', 'parent-fill')
       parentBtn.append(fill, mk('span', 'parent-text', 'Parent: got it'))
-      host.replaceChildren(...head, labelEl, pad, colourRow, actions, reward, parentBtn)
+      host.replaceChildren(...head, labelEl, pad, actions, reward, parentBtn, modal)
 
       const ctx = pad.getContext('2d')
 
@@ -157,9 +187,13 @@ export function createTraceTool({ id, label, items, labelText, withModes = false
         }, { signal })
       }
 
+      colourBtn.addEventListener('click', openInkColour, { signal })
       for (const sw of swatches) {
-        sw.el.addEventListener('click', () => { inkColour = sw.hex; showInkColour() }, { signal })
+        sw.el.addEventListener('click', () => { inkColour = sw.hex; showInkColour(); closeInkColour() }, { signal })
       }
+      doneBtn.addEventListener('click', closeInkColour, { signal })
+      modal.addEventListener('click', (e) => { if (e && e.target === modal) closeInkColour() }, { signal })
+      modal.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeInkColour() }, { signal })
 
       clearBtn.addEventListener('click', () => { state = clearInk(state); schedule() }, { signal })
       nextBtn.addEventListener('click', () => { if (isLetterDone(state)) { state = goNext(state, items); schedule() } }, { signal })

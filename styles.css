@@ -510,7 +510,13 @@ button, input {
 .mode-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
 .mode-row select { min-height: 48px; min-width: 48px; padding: 0 12px; font-size: 1rem; border: 2px solid var(--control-border); border-radius: 8px; background: var(--control-bg); color: var(--control-text); }
 .mode-row select[hidden] { display: none; }
-/* Ink colour picker on the drawing tools: five 48px swatches per row so it fits a phone. */
+/* Ink colour: a round button beside Clear and Next shows the current colour. Tapping it opens a
+   modal over the page with the swatches, so the layout height does not change. */
+#tool-area:not([data-tool="timer"]) .ink-colour-btn { width: 48px; height: 48px; padding: 0; border-radius: 50%; border: 3px solid var(--page-bg); box-shadow: 0 0 0 2px var(--control-border); }
+.ink-modal { position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(5, 8, 20, 0.7); }
+.ink-modal[hidden] { display: none; }
+.ink-modal-panel { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 16px; max-width: 320px; background: var(--control-bg); border: 2px solid var(--control-border); border-radius: 12px; }
+.ink-modal-title { margin: 0; font-weight: bold; color: var(--time-text); }
 .ink-colours { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 280px; }
 .pad { width: min(92vw, 420px, 50dvh); aspect-ratio: 1 / 1; border: 3px solid var(--control-border); border-radius: 12px; background: var(--control-bg); touch-action: none; display: block; }
 .reward { min-height: 56px; display: flex; align-items: center; gap: 8px; font-size: 1.6rem; font-weight: bold; color: var(--reward-text); }

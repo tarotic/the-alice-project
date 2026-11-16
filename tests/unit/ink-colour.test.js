@@ -110,20 +110,29 @@ test('drawInk falls back to the default ink for ink with no colours recorded', (
   assert.deepEqual(calls, [INK_COLOUR])
 })
 
-test('the picker sits in the drawing tools: swatches pick the next stroke colour and do not touch the game', () => {
+test('the colour button opens a modal; picking a swatch sets the next stroke colour and closes it', () => {
+  const dom = installFakeDom()
   const host = dom.makeHost()
   lettersTool.mount(host)
-  const row = dom.find(host, (e) => e.className === 'ink-colours')
-  assert.ok(row, 'colour row present')
-  assert.equal(row.children.length, RING_COLOURS.length)
+  const colourBtn = dom.find(host, (e) => e.className === 'ink-colour-btn')
+  const modal = dom.find(host, (e) => e.className === 'ink-modal')
+  assert.ok(colourBtn && modal, 'colour button and modal present')
+  assert.equal(modal.hidden, true, 'modal starts closed')
   const pad = dom.find(host, (e) => e.className === 'pad')
-  const swatch = (hex) => row.children[RING_COLOURS.findIndex((c) => c.hex === hex)]
+  const grid = dom.find(modal, (e) => e.className === 'ink-colours')
+  assert.equal(grid.children.length, RING_COLOURS.length)
+  const swatch = (hex) => grid.children[RING_COLOURS.findIndex((c) => c.hex === hex)]
   const toPx = (p) => ({ clientX: p.x * 4, clientY: p.y * 4 })
 
   pad.fire('pointerdown', { ...toPx(P(10, 10)), pointerId: 1 })
+  colourBtn.fire('click')
+  assert.equal(modal.hidden, false, 'tapping the colour button opens the modal')
   swatch(RED).fire('click')
+  assert.equal(modal.hidden, true, 'picking a swatch closes the modal')
+  assert.equal(colourBtn.style.background, RED, 'button shows the new colour')
   pad.fire('pointermove', { ...toPx(P(30, 30)), pointerId: 1 })
   pad.fire('pointerup', { pointerId: 1 })
+  colourBtn.fire('click')
   swatch(BLUE).fire('click')
   pad.fire('pointerdown', { ...toPx(P(50, 50)), pointerId: 2 })
   pad.fire('pointerup', { pointerId: 2 })
@@ -131,8 +140,14 @@ test('the picker sits in the drawing tools: swatches pick the next stroke colour
   const s = lettersTool.getState()
   assert.deepEqual(s.ink.colours, [INK_COLOUR, BLUE])
   assert.equal(s.ink.strokes.length, 2)
-  swatch(INK_COLOUR).fire('click')
+
+  colourBtn.fire('click')
+  modal.fire('keydown', { key: 'Escape' })
+  assert.equal(modal.hidden, true, 'Escape closes the modal')
+  colourBtn.fire('click')
+  modal.fire('click', { target: modal })
+  assert.equal(modal.hidden, true, 'a tap on the backdrop closes the modal')
   lettersTool.unmount()
+  assert.equal(dom.liveListeners(), 0, 'no listeners left after unmount')
   dom.flushRaf()
 })
-
