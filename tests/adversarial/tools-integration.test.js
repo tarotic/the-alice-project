@@ -25,7 +25,7 @@ const passViaParent = (h) => { hold(h, 1100); dom.flushRaf() }
 
 test('AC1 real tool index: exactly three tools, ids timer, letters, shapes, labels "Timer" "Letters" "Shapes"', () => {
   const tools = listTools()
-  assert.equal(tools.length, 3); assert.deepEqual(tools.map((t) => t.label), ['Timer', 'Letters', 'Shapes']); assert.deepEqual(tools.map((t) => t.id), ['timer', 'letters', 'shapes'])
+  assert.equal(tools.length, 4); assert.deepEqual(tools.map((t) => t.label), ['Timer', 'Letters', 'Shapes', 'Complex shapes']); assert.deepEqual(tools.map((t) => t.id), ['timer', 'letters', 'shapes', 'complex'])
   assert.equal(getTool('timer').label, 'Timer'); assert.equal(getTool('letters').label, 'Letters'); assert.equal(getTool('shapes').label, 'Shapes')
   for (const t of tools) { assert.equal(typeof t.mount, 'function'); assert.equal(typeof t.unmount, 'function') }
   assert.throws(() => defaultRegistry.registerTool({ id: 'shapes', label: 'X', mount() {}, unmount() {} }))

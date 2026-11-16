@@ -25,8 +25,8 @@ const dirty = (h) => {
 
 test('AC1 registry lists Timer, Letters then Shapes', () => {
   const t = listTools()
-  assert.deepEqual(t.map((x) => [x.id, x.label]), [['timer', 'Timer'], ['letters', 'Letters'], ['shapes', 'Shapes']])
-  assert.equal(t.length, 3)
+  assert.deepEqual(t.map((x) => [x.id, x.label]), [['timer', 'Timer'], ['letters', 'Letters'], ['shapes', 'Shapes'], ['complex', 'Complex shapes']])
+  assert.equal(t.length, 4)
 })
 
 test('AC2 switching mounts/unmounts exactly once each', () => {

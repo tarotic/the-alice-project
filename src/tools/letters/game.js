@@ -26,7 +26,7 @@ export function scoreInk(glyph, ink) {
 
 export function inkEvent(state, event, glyphs = GLYPHS) {
   let ink = state.ink
-  if (event.type === 'down') ink = startStroke(ink, event.pointerId, event.point)
+  if (event.type === 'down') ink = startStroke(ink, event.pointerId, event.point, event.colour)
   else if (event.type === 'move') ink = extendStroke(ink, event.pointerId, event.point)
   else if (event.type === 'up' || event.type === 'cancel') ink = endStroke(ink, event.pointerId)
   if (ink === state.ink) return state

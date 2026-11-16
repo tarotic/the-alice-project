@@ -3,14 +3,20 @@ import { createLetterGame, currentGlyph, inkEvent, parentEvent, clearInk, goNext
 import { MODE_OPTIONS, PICK_LETTERS } from './modes.js'
 import { holdProgress, insideRect } from './parent-hold.js'
 import { drawGuide } from './views/guide.js'
-import { drawInk } from './views/ink.js'
+import { drawInk, INK_COLOUR } from './views/ink.js'
 import { holdProgressWidth } from './views/hold-progress.js'
 import { rewardView, drawRewardShape } from './views/reward.js'
+import { RING_COLOURS } from '../../colours.js'
 
 export function toGlyphSpace(clientX, clientY, rect) {
   if (!(rect.width > 0) || !(rect.height > 0)) return null
   return { x: ((clientX - rect.left) / rect.width) * 100, y: ((clientY - rect.top) / rect.height) * 100 }
 }
+
+// The ink colour picked on any drawing tool. Kept at module level, like the timer's ring colour,
+// so it survives switching tools. It only sets the colour of the next stroke: lines already drawn
+// keep their colour, and no colour change touches the ink, the score or the parent hold.
+let inkColour = INK_COLOUR
 
 export function createTraceTool({ id, label, items, labelText, withModes = false }) {
   let controller = null
@@ -58,6 +64,21 @@ export function createTraceTool({ id, label, items, labelText, withModes = false
         modeRow.append(modeSel, letterSel)
         head.push(modeRow)
       }
+      const colourRow = mk('div', 'ink-colours')
+      colourRow.setAttribute('role', 'group')
+      colourRow.setAttribute('aria-label', 'Ink colour')
+      const swatches = RING_COLOURS.map((c) => {
+        const b = mk('button', 'swatch')
+        b.type = 'button'
+        b.setAttribute('aria-label', c.name)
+        b.style.background = c.hex
+        colourRow.append(b)
+        return { el: b, hex: c.hex }
+      })
+      const showInkColour = () => {
+        for (const sw of swatches) sw.el.setAttribute('aria-pressed', String(sw.hex === inkColour))
+      }
+      showInkColour()
       const clearBtn = mk('button', '', 'Clear')
       const nextBtn = mk('button', '', 'Next')
       clearBtn.type = nextBtn.type = 'button'
@@ -71,7 +92,7 @@ export function createTraceTool({ id, label, items, labelText, withModes = false
       parentBtn.type = 'button'
       const fill = mk('span', 'parent-fill')
       parentBtn.append(fill, mk('span', 'parent-text', 'Parent: got it'))
-      host.replaceChildren(...head, labelEl, pad, actions, reward, parentBtn)
+      host.replaceChildren(...head, labelEl, pad, colourRow, actions, reward, parentBtn)
 
       const ctx = pad.getContext('2d')
 
@@ -115,7 +136,7 @@ export function createTraceTool({ id, label, items, labelText, withModes = false
         const p = point(e)
         if (p === null) return
         if (type === 'down') pad.setPointerCapture(e.pointerId)
-        state = inkEvent(state, { type, pointerId: e.pointerId, point: p }, items)
+        state = inkEvent(state, { type, pointerId: e.pointerId, point: p, colour: inkColour }, items)
         schedule()
       }
       pad.addEventListener('pointerdown', padEvent('down'), { signal })
@@ -134,6 +155,10 @@ export function createTraceTool({ id, label, items, labelText, withModes = false
           state = setMode(state, { kind: 'pick', letter: letterSel.value }, items)
           schedule()
         }, { signal })
+      }
+
+      for (const sw of swatches) {
+        sw.el.addEventListener('click', () => { inkColour = sw.hex; showInkColour() }, { signal })
       }
 
       clearBtn.addEventListener('click', () => { state = clearInk(state); schedule() }, { signal })

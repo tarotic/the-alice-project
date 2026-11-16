@@ -443,14 +443,17 @@ button, input {
 /* Tool switcher bar: one tab per tool, built by src/ui.js. */
 #switcher {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 8px;
-  height: var(--switcher-height);
+  min-height: var(--switcher-height);
   box-sizing: border-box;
   padding: 8px;
   background: var(--control-bg);
   border-bottom: 1px solid var(--control-border);
 }
+
+#switcher button { white-space: nowrap; }
 
 #switcher button[aria-pressed="true"] {
   background: var(--switch-active-bg);
@@ -492,6 +495,8 @@ button, input {
 .mode-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
 .mode-row select { min-height: 48px; min-width: 48px; padding: 0 12px; font-size: 1rem; border: 2px solid var(--control-border); border-radius: 8px; background: var(--control-bg); color: var(--control-text); }
 .mode-row select[hidden] { display: none; }
+/* Ink colour picker on the drawing tools: five 48px swatches per row so it fits a phone. */
+.ink-colours { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 280px; }
 .pad { width: min(92vw, 420px); aspect-ratio: 1 / 1; border: 3px solid var(--control-border); border-radius: 12px; background: var(--control-bg); touch-action: none; display: block; }
 .reward { min-height: 56px; display: flex; align-items: center; gap: 8px; font-size: 1.6rem; font-weight: bold; color: var(--reward-text); }
 .reward canvas { width: 48px; height: 48px; }
