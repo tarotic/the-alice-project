@@ -197,13 +197,13 @@ test('AC21 finished screen: Done, 00:00, empty arc, finished tone; 1 ms earlier 
 });
 
 test('AC13 ui.js render disables presets, inputs and Set from durationLocked', () => {
-  const ui = read('src/ui.js');
+  const ui = read('src/tools/timer/tool.js');
   for (const frag of ['b.disabled = s.durationLocked'])
     assert.ok(ui.includes(frag), frag);
 });
 
 test('AC15 ui.js: tab-return ticks with Date.now, single loop guard, no setInterval', () => {
-  const ui = read('src/ui.js');
+  const ui = read('src/tools/timer/tool.js');
   assert.ok(!/setInterval|setTimeout/.test(ui));
   assert.match(ui, /visibilitychange[\s\S]*tick\(timer, Date\.now\(\)\)/);
   assert.match(ui, /frameId === null && timer\.status === 'running'/);

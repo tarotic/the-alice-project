@@ -8,6 +8,11 @@
   --control-bg: #1A2342;
   --control-border: #3D4A72;
   --control-text: #F2F5FF;
+  --switcher-height: 64px;
+  --switch-active-bg: #0072B2;
+  --switch-active-text: #FFFFFF;
+  --reward-text: #7BD88F;
+  --hold-fill: #2E7D32;
 }
 
 html, body {
@@ -145,7 +150,7 @@ button, input {
 }
 
 .app {
-  min-height: 100dvh;
+  min-height: calc(100dvh - var(--switcher-height));
   box-sizing: border-box;
   padding: 12px;
   display: flex;
@@ -434,3 +439,59 @@ button, input {
     height: min(70vh, 45vw);
   }
 }
+
+/* Tool switcher bar: one tab per tool, built by src/ui.js. */
+#switcher {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  height: var(--switcher-height);
+  box-sizing: border-box;
+  padding: 8px;
+  background: var(--control-bg);
+  border-bottom: 1px solid var(--control-border);
+}
+
+#switcher button[aria-pressed="true"] {
+  background: var(--switch-active-bg);
+  color: var(--switch-active-text);
+  border-color: var(--done-text);
+}
+
+/* Letters and Shapes area. Scoped so it never touches the timer's own rules. */
+#tool-area:not([data-tool="timer"]) {
+  box-sizing: border-box;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  min-height: calc(100dvh - var(--switcher-height));
+}
+
+#tool-area:not([data-tool="timer"]) * {
+  box-sizing: border-box;
+}
+
+#tool-area:not([data-tool="timer"]) .actions {
+  gap: 12px;
+}
+
+#tool-area:not([data-tool="timer"]) button:disabled {
+  opacity: 0.4;
+}
+
+#tool-area:not([data-tool="timer"]) button, #switcher button {
+  min-width: 48px;
+  min-height: 48px;
+  padding: 0 16px;
+}
+
+.letter-label { font-size: 1.5rem; font-weight: bold; color: var(--time-text); }
+.pad { width: min(92vw, 420px); aspect-ratio: 1 / 1; border: 3px solid var(--control-border); border-radius: 12px; background: var(--control-bg); touch-action: none; display: block; }
+.reward { min-height: 56px; display: flex; align-items: center; gap: 8px; font-size: 1.6rem; font-weight: bold; color: var(--reward-text); }
+.reward canvas { width: 48px; height: 48px; }
+.parent { position: relative; align-self: flex-end; overflow: hidden; min-width: 120px; min-height: 48px; font-size: 0.9rem; background: var(--control-bg); border: 2px dashed var(--control-border); color: var(--control-text); user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; touch-action: none; }
+.parent-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--hold-fill); pointer-events: none; }
+.parent-text { position: relative; }

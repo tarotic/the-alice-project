@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Timer</title>
-<link rel="stylesheet" href="./styles.css?v=2">
+<title>Play</title>
+<link rel="stylesheet" href="./styles.css?v=3">
 </head>
 <body>
 <div class="space" aria-hidden="true">
@@ -20,7 +20,9 @@
     <span class="planet-ring planet-ring-front"></span>
   </div>
 </div>
-<main class="app">
+<nav id="switcher" aria-label="Tools"></nav>
+<main id="tool-area" data-tool="timer">
+<div class="app" id="timer-tool">
   <section class="display">
     <svg class="ring" id="ring" viewBox="0 0 120 120" aria-hidden="true">
       <circle class="ring-track" id="ring-track" cx="60" cy="60" r="54"></circle>
@@ -70,6 +72,7 @@
       <button type="button" id="reset-btn" hidden>Reset</button>
     </div>
   </section>
+</div>
 </main>
 <script type="module" src="./src/ui.js"></script>
 </body>

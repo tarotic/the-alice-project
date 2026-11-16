@@ -7,7 +7,7 @@ import { WHEEL_MINUTES_MAX, WHEEL_SECONDS_MAX, WHEEL_ITEM_PX, indexFromOffset, o
 
 const html = readText('index.html');
 const css = readText('styles.css');
-const ui = readText('src/ui.js');
+const ui = readText('src/tools/timer/tool.js');
 
 test('CW1 offset maps to index by rounding and clamps to 0..max', () => {
   assert.equal(indexFromOffset(0, 99), 0);

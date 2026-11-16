@@ -84,7 +84,7 @@ test('styles define the launch and blast animations', () => {
 });
 
 test('the swatch colour is applied through the ring-running variable', () => {
-  const ui = readText('src/ui.js');
+  const ui = readText('src/tools/timer/tool.js');
   assert.ok(ui.includes("setProperty('--ring-running'"));
 });
 
@@ -98,7 +98,7 @@ test('justFinished is true only on the transition into finished', () => {
 });
 
 test('finish chime is wired through the single timer setter and unlocked on Start', () => {
-  const ui = readText('src/ui.js');
+  const ui = readText('src/tools/timer/tool.js');
   assert.ok(ui.includes('justFinished(prev, next)'));
   assert.ok(ui.includes('unlockSound();'));
   const sound = readText('src/sound.js');
@@ -106,6 +106,6 @@ test('finish chime is wired through the single timer setter and unlocked on Star
 });
 
 test('rocket visibility uses the attribute, since SVG has no hidden property', () => {
-  const ui = readText('src/ui.js');
+  const ui = readText('src/tools/timer/tool.js');
   assert.ok(ui.includes("rocketEl.toggleAttribute('hidden'"));
 });
