@@ -15,16 +15,18 @@
   --hold-fill: #2E7D32;
 }
 
+/* The page is a single screen: no scrolling of the document, and no bounce past the edges. */
 html, body {
   margin: 0;
   height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 body {
   background: var(--page-bg);
   color: var(--time-text);
   font-family: system-ui, sans-serif;
-  overflow-x: hidden;
 }
 
 /* Stars: a small repeating field of dots, behind everything. No images are loaded. */
@@ -492,7 +494,7 @@ button, input {
 .mode-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
 .mode-row select { min-height: 48px; min-width: 48px; padding: 0 12px; font-size: 1rem; border: 2px solid var(--control-border); border-radius: 8px; background: var(--control-bg); color: var(--control-text); }
 .mode-row select[hidden] { display: none; }
-.pad { width: min(92vw, 420px); aspect-ratio: 1 / 1; border: 3px solid var(--control-border); border-radius: 12px; background: var(--control-bg); touch-action: none; display: block; }
+.pad { width: min(92vw, 420px, 50dvh); aspect-ratio: 1 / 1; border: 3px solid var(--control-border); border-radius: 12px; background: var(--control-bg); touch-action: none; display: block; }
 .reward { min-height: 56px; display: flex; align-items: center; gap: 8px; font-size: 1.6rem; font-weight: bold; color: var(--reward-text); }
 .reward canvas { width: 48px; height: 48px; }
 .parent { position: relative; align-self: flex-end; overflow: hidden; min-width: 120px; min-height: 48px; font-size: 0.9rem; background: var(--control-bg); border: 2px dashed var(--control-border); color: var(--control-text); user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; touch-action: none; }
