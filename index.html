@@ -47,8 +47,20 @@
       <button type="button" class="preset" data-preset-seconds="600">10 min</button>
     </div>
     <div id="custom">
-      <span class="field"><input id="custom-minutes" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" value="0" aria-label="Minutes"><span class="unit">min</span></span>
-      <span class="field"><input id="custom-seconds" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" value="0" aria-label="Seconds"><span class="unit">sec</span></span>
+      <div class="field">
+        <div class="wheel-wrap">
+          <div class="wheel" id="wheel-min" role="spinbutton" tabindex="0" aria-label="Minutes" aria-valuemin="0" aria-valuemax="99" aria-valuenow="0"><ul class="wheel-list" id="list-min" role="presentation"></ul></div>
+          <div class="wheel-band" aria-hidden="true"></div>
+        </div>
+        <span class="unit">min</span>
+      </div>
+      <div class="field">
+        <div class="wheel-wrap">
+          <div class="wheel" id="wheel-sec" role="spinbutton" tabindex="0" aria-label="Seconds" aria-valuemin="0" aria-valuemax="59" aria-valuenow="0"><ul class="wheel-list" id="list-sec" role="presentation"></ul></div>
+          <div class="wheel-band" aria-hidden="true"></div>
+        </div>
+        <span class="unit">sec</span>
+      </div>
     </div>
     <div id="colours" role="group" aria-label="Ring colour"></div>
     <div class="actions">
