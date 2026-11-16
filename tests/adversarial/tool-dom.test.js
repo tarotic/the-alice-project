@@ -43,7 +43,9 @@ test('mount builds expected controls: label a lowercase, Clear, Next (disabled),
   const t = text(host)
   assert.match(t, /a · lowercase/); assert.match(t, /Clear/); assert.match(t, /Next/); assert.match(t, /Parent: got it/)
   assert.equal(find(host, (e) => e.textContent === 'Next').disabled, true)
-  assert.ok(!find(host, (e) => e.tag === 'select'))
+  // letters has a mode row: a Mode select and a Letter select, Letter hidden unless Pick a letter
+  const selects = []; (function w(e) { if (e.tag === 'select') selects.push(e); e.children.forEach(w) })(host)
+  assert.equal(selects.length, 2); assert.equal(selects[1].hidden, true)
   lettersTool.unmount()
 })
 test('repeated mount/unmount x200 leaves no live listeners and no pending rAF', () => {
@@ -186,27 +188,29 @@ test('R2 every glyph via DOM: trace by finger passes after the last lift; pointe
 test('R3 i/j via DOM: stem alone no reward; far tap (>12) no reward; near tap after stem rewards (on press, stays after lift)', () => {
   for (const id of ['i', 'j']) {
     const g = GLYPHS.find((x) => x.id === id)
+    const dotY = g.strokes[1].reduce((sum, p) => sum + p.y, 0) / g.strokes[1].length
     const stemUp = (h) => { const pd = pad(h); g.strokes[0].forEach((p, i) => pd.fire(i ? 'pointermove' : 'pointerdown', { ...toPx(p), pointerId: 1 })); pd.fire('pointerup', { pointerId: 1 }); flushRaf() }
     const tap = (h, x, y, pid = 2) => { const pd = pad(h); pd.fire('pointerdown', { clientX: x * 4, clientY: y * 4, pointerId: pid }); flushRaf(); const onPress = nextBtn(h).disabled; pd.fire('pointerup', { pointerId: pid }); flushRaf(); return { onPress, afterLift: nextBtn(h).disabled } }
     let h = fresh(); goTo(h, id); stemUp(h); assert.equal(nextBtn(h).disabled, true, id + ' stem alone')
-    assert.deepEqual(tap(h, 50, 25 + 13), { onPress: true, afterLift: true }, id + ' tap 13 away'); assert.deepEqual(tap(h, 50 + 15, 25), { onPress: true, afterLift: true })
-    assert.deepEqual(tap(h, 50, 25), { onPress: false, afterLift: false }, id + ' near tap'); assert.match(text(h), /Well done/)
+    assert.deepEqual(tap(h, 50, dotY + 13), { onPress: true, afterLift: true }, id + ' tap 13 away'); assert.deepEqual(tap(h, 50 + 15, dotY), { onPress: true, afterLift: true })
+    assert.deepEqual(tap(h, 50, dotY), { onPress: false, afterLift: false }, id + ' near tap'); assert.match(text(h), /Well done/)
     lettersLeave(h)
     h = fresh(); goTo(h, id)                                   // tap before the stem
-    assert.deepEqual(tap(h, 50, 25), { onPress: true, afterLift: true }); stemUp(h); assert.equal(nextBtn(h).disabled, false, id + ' tap then stem')
+    assert.deepEqual(tap(h, 50, dotY), { onPress: true, afterLift: true }); stemUp(h); assert.equal(nextBtn(h).disabled, false, id + ' tap then stem')
     lettersLeave(h)
   }
 })
 function lettersLeave() { lettersTool.unmount() }
 test('R3 DOM with scrolled/resized pad rect: events mapped through getBoundingClientRect still pass the i dot tap and reject a far tap', () => {
   const h = fresh(); goTo(h, 'i'); const pd = pad(h), g = GLYPHS.find((x) => x.id === 'i')
+  const dotY = g.strokes[1].reduce((sum, p) => sum + p.y, 0) / g.strokes[1].length
   pd.getBoundingClientRect = () => ({ left: 37, top: -250, width: 300, height: 300 })
   const px = (p) => ({ clientX: 37 + p.x * 3, clientY: -250 + p.y * 3 })
   g.strokes[0].forEach((p, i) => pd.fire(i ? 'pointermove' : 'pointerdown', { ...px(p), pointerId: 1 })); pd.fire('pointerup', { pointerId: 1 }); flushRaf()
   assert.equal(nextBtn(h).disabled, true)
   pd.fire('pointerdown', { ...px({ x: 50, y: 40 }), pointerId: 2 }); pd.fire('pointerup', { pointerId: 2 }); flushRaf(); assert.equal(nextBtn(h).disabled, true, '15 away')
   pd.getBoundingClientRect = () => ({ left: 5, top: 900, width: 150, height: 150 })     // layout changed
-  pd.fire('pointerdown', { clientX: 5 + 50 * 1.5, clientY: 900 + 25 * 1.5, pointerId: 3 }); pd.fire('pointerup', { pointerId: 3 }); flushRaf()
+  pd.fire('pointerdown', { clientX: 5 + 50 * 1.5, clientY: 900 + dotY * 1.5, pointerId: 3 }); pd.fire('pointerup', { pointerId: 3 }); flushRaf()
   assert.equal(nextBtn(h).disabled, false); lettersTool.unmount()
 })
 test('R2 scribbles get no reward even after lifting, for every glyph (grid zigzag over the whole pad)', () => {
@@ -265,5 +269,20 @@ test('R2 once rewarded, further scribbling/moves do not unreward; Clear does', (
   pd.fire('pointerdown', { clientX: 0, clientY: 0, pointerId: 1 }); pd.fire('pointermove', { clientX: 390, clientY: 390, pointerId: 1 }); pd.fire('pointerup', { pointerId: 1 }); flushRaf()
   assert.equal(nextBtn(h).disabled, false)
   find(h, (e) => e.textContent === 'Clear').fire('click'); flushRaf(); assert.equal(nextBtn(h).disabled, true)
+  lettersTool.unmount()
+})
+test('mode selector in the DOM: pick a letter, change the letter, back to A to Z, random all redraw the label', () => {
+  const host = new FakeEl('main'); lettersTool.mount(host)
+  const modeSel = find(host, (e) => e.className === 'mode-select')
+  const letterSel = find(host, (e) => e.className === 'letter-select')
+  const label = () => find(host, (e) => e.className === 'letter-label').textContent
+  const choose = (sel, value) => { sel.value = value; sel.fire('change', {}); flushRaf() }
+  assert.equal(label(), 'a · lowercase'); assert.equal(letterSel.hidden, true)
+  choose(modeSel, 'pick'); assert.equal(label(), 'a · lowercase'); assert.equal(letterSel.hidden, false)
+  choose(letterSel, 'k'); assert.equal(label(), 'k · lowercase')
+  choose(letterSel, 'k'); assert.equal(label(), 'k · lowercase')
+  choose(modeSel, 'sequence'); assert.equal(label(), 'a · lowercase'); assert.equal(letterSel.hidden, true)
+  choose(modeSel, 'random'); assert.equal(letterSel.hidden, true)
+  assert.match(label(), /· (lowercase|uppercase)$/)
   lettersTool.unmount()
 })

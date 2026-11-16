@@ -15,7 +15,8 @@ const inkOf = (strokes) => {
   return ink
 }
 const trace = (g, k) => g.strokes[k].map((p) => ({ x: p.x, y: p.y }))
-const centre = { x: 50, y: 25 }
+const dotStroke = getGlyph("i").strokes[1]
+const centre = { x: 50, y: dotStroke.reduce((s, p) => s + p.y, 0) / dotStroke.length }
 const tapAt = (dx, dy) => [{ x: centre.x + dx, y: centre.y + dy }]
 const DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1], [0.7071, 0.7071], [-0.7071, -0.7071], [0.7071, -0.7071], [-0.7071, 0.7071]]
 
@@ -44,11 +45,11 @@ for (const id of ['i', 'j']) {
 }
 
 test('single-point ink stroke flows through start/end/inkPoints/score', () => {
-  let ink = startStroke(emptyInk(), 7, { x: 50, y: 25 })
-  assert.deepEqual(ink.strokes, [[{ x: 50, y: 25 }]])
+  let ink = startStroke(emptyInk(), 7, { x: 50, y: centre.y })
+  assert.deepEqual(ink.strokes, [[{ x: 50, y: centre.y }]])
   ink = endStroke(ink, 7)
   assert.equal(ink.activePointerId, null)
-  assert.deepEqual(inkPoints(ink), [{ x: 50, y: 25 }])
+  assert.deepEqual(inkPoints(ink), [{ x: 50, y: centre.y }])
   const g = getGlyph('i')
   let st = createLetterGame()
   st = { ...st, index: 0 }
@@ -61,7 +62,7 @@ test('single-point ink stroke flows through start/end/inkPoints/score', () => {
   stem.forEach((p, i) => { game = inkEvent(game, { type: i ? 'move' : 'down', pointerId: 1, point: p }, glyphs) })
   game = inkEvent(game, { type: 'up', pointerId: 1 }, glyphs)
   assert.equal(game.done, false)
-  game = inkEvent(game, { type: 'down', pointerId: 2, point: { x: 53, y: 27 } }, glyphs)
+  game = inkEvent(game, { type: 'down', pointerId: 2, point: { x: centre.x + 3, y: centre.y + 2 } }, glyphs)
   game = inkEvent(game, { type: 'up', pointerId: 2 }, glyphs)
   assert.equal(game.done, true)
 })

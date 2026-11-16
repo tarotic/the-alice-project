@@ -1,5 +1,6 @@
 import { GLYPHS } from './glyphs.js'
-import { createLetterGame, currentGlyph, inkEvent, parentEvent, clearInk, goNext, isLetterDone } from './game.js'
+import { createLetterGame, currentGlyph, inkEvent, parentEvent, clearInk, goNext, setMode, isLetterDone } from './game.js'
+import { MODE_OPTIONS, PICK_LETTERS } from './modes.js'
 import { holdProgress, insideRect } from './parent-hold.js'
 import { drawGuide } from './views/guide.js'
 import { drawInk } from './views/ink.js'
@@ -11,7 +12,7 @@ export function toGlyphSpace(clientX, clientY, rect) {
   return { x: ((clientX - rect.left) / rect.width) * 100, y: ((clientY - rect.top) / rect.height) * 100 }
 }
 
-export function createTraceTool({ id, label, items, labelText }) {
+export function createTraceTool({ id, label, items, labelText, withModes = false }) {
   let controller = null
   let rafId = 0
   let holdRafId = 0
@@ -35,6 +36,28 @@ export function createTraceTool({ id, label, items, labelText }) {
       }
       const labelEl = mk('div', 'letter-label')
       const pad = mk('canvas', 'pad')
+      let modeSel = null
+      let letterSel = null
+      const head = []
+      if (withModes) {
+        const modeRow = mk('div', 'mode-row')
+        modeSel = mk('select', 'mode-select')
+        modeSel.setAttribute('aria-label', 'Mode')
+        for (const o of MODE_OPTIONS) {
+          const opt = mk('option', '', o.label)
+          opt.value = o.kind
+          modeSel.append(opt)
+        }
+        letterSel = mk('select', 'letter-select')
+        letterSel.setAttribute('aria-label', 'Letter')
+        for (const l of PICK_LETTERS) {
+          const opt = mk('option', '', l.toUpperCase())
+          opt.value = l
+          letterSel.append(opt)
+        }
+        modeRow.append(modeSel, letterSel)
+        head.push(modeRow)
+      }
       const clearBtn = mk('button', '', 'Clear')
       const nextBtn = mk('button', '', 'Next')
       clearBtn.type = nextBtn.type = 'button'
@@ -48,7 +71,7 @@ export function createTraceTool({ id, label, items, labelText }) {
       parentBtn.type = 'button'
       const fill = mk('span', 'parent-fill')
       parentBtn.append(fill, mk('span', 'parent-text', 'Parent: got it'))
-      host.replaceChildren(labelEl, pad, actions, reward, parentBtn)
+      host.replaceChildren(...head, labelEl, pad, actions, reward, parentBtn)
 
       const ctx = pad.getContext('2d')
 
@@ -71,6 +94,11 @@ export function createTraceTool({ id, label, items, labelText }) {
         drawGuide(ctx, g, size)
         drawInk(ctx, state.ink, size)
         labelEl.textContent = labelText(g)
+        if (modeSel) {
+          modeSel.value = state.mode.kind
+          letterSel.hidden = state.mode.kind !== 'pick'
+          if (state.mode.kind === 'pick') letterSel.value = state.mode.letter
+        }
         const done = isLetterDone(state)
         const rv = rewardView(done)
         reward.style.visibility = rv.visible ? 'visible' : 'hidden'
@@ -94,6 +122,19 @@ export function createTraceTool({ id, label, items, labelText }) {
       pad.addEventListener('pointermove', padEvent('move'), { signal })
       pad.addEventListener('pointerup', padEvent('up'), { signal })
       pad.addEventListener('pointercancel', padEvent('cancel'), { signal })
+
+      if (modeSel) {
+        modeSel.addEventListener('change', () => {
+          const kind = modeSel.value
+          const mode = kind === 'pick' ? { kind, letter: letterSel.value } : { kind }
+          state = setMode(state, mode, items)
+          schedule()
+        }, { signal })
+        letterSel.addEventListener('change', () => {
+          state = setMode(state, { kind: 'pick', letter: letterSel.value }, items)
+          schedule()
+        }, { signal })
+      }
 
       clearBtn.addEventListener('click', () => { state = clearInk(state); schedule() }, { signal })
       nextBtn.addEventListener('click', () => { if (isLetterDone(state)) { state = goNext(state, items); schedule() } }, { signal })
@@ -152,4 +193,5 @@ export const lettersTool = createTraceTool({
   label: 'Letters',
   items: GLYPHS,
   labelText: (g) => `${g.id} · ${g.case}`,
+  withModes: true,
 })
