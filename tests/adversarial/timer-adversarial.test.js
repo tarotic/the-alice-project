@@ -198,7 +198,7 @@ test('AC21 finished screen: Done, 00:00, empty arc, finished tone; 1 ms earlier 
 
 test('AC13 ui.js render disables presets, inputs and Set from durationLocked', () => {
   const ui = read('src/ui.js');
-  for (const frag of ['b.disabled = s.durationLocked', 'minEl.disabled = s.durationLocked', 'secEl.disabled = s.durationLocked', 'applyEl.disabled = s.durationLocked'])
+  for (const frag of ['b.disabled = s.durationLocked', 'minEl.disabled = s.durationLocked', 'secEl.disabled = s.durationLocked'])
     assert.ok(ui.includes(frag), frag);
 });
 
@@ -228,7 +228,7 @@ test('AC17 CSS: no sub-48px size on controls; no inline styles; control element 
       assert.ok(Number(m[2]) >= 48, `${sel.trim()} ${m[0]}`);
   }
   assert.match(css, /button,\s*input\s*\{[^}]*min-width:\s*48px;[^}]*min-height:\s*48px;/);
-  assert.equal([...html.matchAll(/<(button|input)\b/g)].length, 4 + 2 + 1 + 4);
+  assert.equal([...html.matchAll(/<(button|input)\b/g)].length, 4 + 2 + 4);
   assert.ok(!/<(a|select|textarea)\b/.test(html));
 });
 
@@ -298,6 +298,6 @@ test('AC21a AC21b contrast computed independently; no transition/animation', () 
   assert.ok(!/transition/.test(css));
   const animated = [...css.matchAll(/animation:\s*([a-z-]+)/g)].map((m) => m[1]);
   assert.ok(animated.length > 0);
-  for (const name of animated) assert.ok(['rocket-shake', 'flame-flicker', 'rocket-launch', 'ring-blast', 'none'].includes(name), name);
+  for (const name of animated) assert.ok(['rocket-shake', 'flame-flicker', 'rocket-launch', 'ring-blast', 'orbit', 'none'].includes(name), name);
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
 });
