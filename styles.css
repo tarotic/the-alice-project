@@ -448,17 +448,22 @@ button, input {
 /* Tool switcher bar: one tab per tool, built by src/ui.js. */
 #switcher {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
   gap: 8px;
-  min-height: var(--switcher-height);
+  width: max-content;
+  max-width: 100%;
+  height: var(--switcher-height);
   box-sizing: border-box;
   padding: 8px;
   background: var(--control-bg);
   border-bottom: 1px solid var(--control-border);
 }
 
-#switcher button { white-space: nowrap; }
+/* Icon tabs: 48px square, so the bar is narrow and stays clear of the planet at the top right. */
+#switcher button.tab { width: 48px; height: 48px; min-width: 48px; min-height: 48px; padding: 0; display: flex; align-items: center; justify-content: center; }
+#switcher .tab svg { width: 28px; height: 28px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
 #switcher button[aria-pressed="true"] {
   background: var(--switch-active-bg);

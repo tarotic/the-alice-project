@@ -9,11 +9,11 @@ import { goNext, createLetterGame } from '../../src/tools/letters/game.js'
 import { listTools } from '../../src/registry.js'
 import '../../src/tools/index.js'
 
-const IDS = ['rocket ship', 'cat', 'dog', 'flower', 'bus', 'star']
+const IDS = ['rocket ship', 'cat', 'dog', 'flower', 'bus', 'star', 'house']
 const own = (p) => p.strokes.flatMap((s) => resample(s, 2))
 const done = (g, ink) => isDone(coverage(g.strokes, ink, TRACE_TOLERANCE), strayRatio(g.strokes, ink, TRACE_TOLERANCE))
 
-test('the six pictures in order, with the letters scoring values unchanged', () => {
+test('the seven pictures in order, with the letters scoring values unchanged', () => {
   assert.deepEqual(PICTURES.map((p) => p.id), IDS)
   assert.deepEqual(PICTURE_ORDER, IDS)
   assert.equal(TRACE_TOLERANCE, 6)
@@ -62,11 +62,11 @@ test('no picture passes as a different picture', () => {
   }
 })
 
-test('Next visits the six pictures in order and wraps back to the rocket ship', () => {
+test('Next visits the seven pictures in order and wraps back to the rocket ship', () => {
   let s = createLetterGame(SEQUENCE_MODE)
   const seen = [s.index]
-  for (let i = 0; i < 6; i++) { s = goNext(s, PICTURES); seen.push(s.index) }
-  assert.deepEqual(seen, [0, 1, 2, 3, 4, 5, 0])
+  for (let i = 0; i < 7; i++) { s = goNext(s, PICTURES); seen.push(s.index) }
+  assert.deepEqual(seen, [0, 1, 2, 3, 4, 5, 6, 0])
 })
 
 test('the complex tool is registered after Shapes with the label "Complex shapes"', () => {

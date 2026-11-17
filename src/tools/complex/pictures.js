@@ -6,7 +6,7 @@ export { PARENT_HOLD_MS } from '../letters/parent-hold.js'
 // Complex shapes: simple pictures made from several shapes and lines together. Each picture is a
 // list of strokes in the same 0..100 box as letters and shapes. Scoring is the same as letters:
 // the child must cover most of all the strokes, and must not scribble far from them.
-export const PICTURE_ORDER = ['rocket ship', 'cat', 'dog', 'flower', 'bus', 'star']
+export const PICTURE_ORDER = ['rocket ship', 'cat', 'dog', 'flower', 'bus', 'star', 'house']
 export const PICTURE_POINT_SPACING = 2
 
 const closed = (pts) => [...pts, pts[0]]
@@ -84,6 +84,13 @@ export const PICTURE_SOURCE = {
   ],
   // A five-point star with short sparkle lines around it.
   star: [starOutline(50, 50, 26, 11), ...sparkleRays(50, 50, 34, 44)],
+  // A roof on a box with a door and a chimney.
+  house: [
+    closed([[18, 48], [50, 16], [82, 48]]),
+    closed([[26, 48], [26, 86], [74, 86], [74, 48]]),
+    closed([[44, 86], [44, 64], [56, 64], [56, 86]]),
+    [[64, 36], [64, 20], [74, 20], [74, 42]],
+  ],
 }
 
 function deepFreeze(o) {
