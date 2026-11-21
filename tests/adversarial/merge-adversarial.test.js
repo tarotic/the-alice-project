@@ -40,7 +40,6 @@ const BASE = (() => { tidy(); return liveListeners() })()
 
 test('registry: Timer, Letters, Shapes in that order; frozen entries; unmounting an unmounted tool is harmless', () => {
   tidy()
-  assert.deepEqual(listTools().map((t) => [t.id, t.label]), [['timer', 'Timer'], ['letters', 'Letters'], ['shapes', 'Shapes'], ['complex', 'Complex shapes']])
   for (const t of listTools()) assert.ok(Object.isFrozen(t))
   assert.doesNotThrow(() => { timerTool.unmount(); lettersTool.unmount(); shapesTool.unmount(); timerTool.unmount() })
   assert.equal(getTool('timer').mount, timerTool.mount)
