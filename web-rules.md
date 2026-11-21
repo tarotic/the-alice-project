@@ -22,3 +22,10 @@ docs/             requirements.md, plan.md, test-report.md
 - Keep functions small and named for what a child-facing feature does.
 - Accessibility: visible text of remaining time, sufficient contrast, respect prefers-reduced-motion.
 - Visuals and feel cannot be auto-verified. The tester writes a MANUAL checklist for me to run on the phone.
+
+## Workflow (every agent and every person)
+- Work on a branch, never directly on `main`. Open a pull request; the `test` workflow must pass before it is merged.
+- Before starting, `git fetch` and merge `origin/main` into your branch. Do it again after any merge to `main`.
+- Run `node --test` before pushing. For any change to layout or CSS, also run `node scripts/layout-check.cjs`.
+- Tests check invariants, not counts. The tab order is pinned only in `tests/unit/tool-registry.test.js`.
+- Every new drawing is covered automatically by `tests/unit/drawing-contract.test.js`. Add it to its collection; do not copy its checks.
